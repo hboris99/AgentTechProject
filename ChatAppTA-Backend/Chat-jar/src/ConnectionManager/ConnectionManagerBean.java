@@ -67,11 +67,15 @@ public class ConnectionManagerBean implements ConnectionManager{
 		
 		String masterAlias = getMasterAlias();
 		System.out.println(masterAlias + " this is the master alias");
+		boolean isNotNull = masterAlias != null;
+		boolean isNotHost = !masterAlias.equals(PORT);
+		System.out.println("Master node is not null: " + isNotNull + " and it is not equal to the port: " + isNotHost);
 		if(masterAlias != null && !masterAlias.equals(PORT)) {
+			System.out.println("I am entering the if in connection manager initalization");
 			ResteasyClient resteasyClient = new ResteasyClientBuilder().build();
 			ResteasyWebTarget resteasyWebTarget = resteasyClient.target(HTTP + masterAlias + "/Chat-war/api/connection");
 			ConnectionManager manager = resteasyWebTarget.proxy(ConnectionManager.class);
-			
+			System.out.println("I've pinged the master node: " + masterAlias);
 			cluster = manager.registerNewnode(localNode.alias);
 			cluster.add(masterAlias);
 			cluster.removeIf(n -> n.equals(localNode.alias));
@@ -195,9 +199,9 @@ public class ConnectionManagerBean implements ConnectionManager{
 	
 	
 	private void notifyShutDown(String node) {
-		for(String node : cluster) {
+		for(String nodes : cluster) {
 			ResteasyClient resteasyClient = new ResteasyClientBuilder().build();
-			ResteasyWebTarget target = resteasyClient.target(HTTP + node + "/Chat-war/api/connection");
+			ResteasyWebTarget target = resteasyClient.target(HTTP + nodes + "/Chat-war/api/connection");
 			ConnectionManager manager = target.proxy(ConnectionManager.class);
 			manager.deleteNode(node);
 			resteasyClient.close();
@@ -240,8 +244,9 @@ public class ConnectionManagerBean implements ConnectionManager{
 	
 	@Override
 	public boolean ping() {
-		// TODO Auto-generated method stub
-		return false;
+	
+		System.out.println("Pinging");
+		return true;
 	}
 
 	@Override

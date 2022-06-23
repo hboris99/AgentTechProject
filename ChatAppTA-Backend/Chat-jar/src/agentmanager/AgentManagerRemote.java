@@ -1,13 +1,18 @@
 package agentmanager;
 
+import java.util.List;
+
 import javax.ejb.Remote;
 
+import agents.AID;
 import agents.Agent;
+import models.AgentType;
 
 @Remote
 public interface AgentManagerRemote {
-	public String startAgent(String name, String id);
-	public Agent getAgentById(String agentId);
-	public Agent getByIdOrStartNew(String name, String id);
-	public void stop(String name);
+	public AID startAgent(String name, AID id);
+	public Agent getAgentById(AID agentId);
+	public Agent getByIdOrStartNew(String name, AID id);
+	public void stop(AID name);
+	public List<AgentType> getAgentTypes();
 }

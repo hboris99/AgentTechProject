@@ -26,7 +26,6 @@ import util.JNDILookup;
 @ServerEndpoint("/ws/{username}")
 public class WSChat {
 	private Map<String, Session> sessions = new HashMap<String, Session>();
-	private AgentManagerRemote agentmanager = JNDILookup.lookUp(JNDILookup.AgentManagerLookup, AgentManagerBean.class);
 	
 	@EJB
 	private ChatManagerRemote chatManager;
@@ -34,22 +33,18 @@ public class WSChat {
 	@OnOpen
 	public void onOpen(@PathParam("username") String username, Session session) {
 		sessions.put(username, session);
-		agentmanager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, username);
 		
 	}
 	
 	@OnClose
 	public void onClose(@PathParam("username") String username, Session session) {
 		sessions.remove(username);
-		agentmanager.stop(username);
 		
 	}
 	
 	@OnError
 	public void onError(@PathParam("username") String username, Session session, Throwable t) {
 		sessions.remove(username);
-		agentmanager.stop(username);
-		chatManager.logOut(username);
 		
 		t.printStackTrace();
 	}
