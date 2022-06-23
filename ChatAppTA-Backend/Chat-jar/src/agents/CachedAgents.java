@@ -5,11 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
+import javax.naming.NamingException;
 
 import models.AgentType;
+import util.JndiTreeParser;
 
 /**
  * Session Bean implementation class CachedAgents
@@ -21,12 +24,15 @@ public class CachedAgents implements CachedAgentsRemote{
 
 	HashMap<AID, Agent> runningAgents;
 	List<AgentType> types;
-
+	
+	
+	@EJB
+	private JndiTreeParser parser;
 	/**
 	 * Default constructor.
 	 */
 	public CachedAgents() {
-		types = new ArrayList();
+		types = new ArrayList<AgentType>();
 		runningAgents = new HashMap<>();
 	}
 	
@@ -36,8 +42,10 @@ public class CachedAgents implements CachedAgentsRemote{
 	}
 	
 	private List<AgentType> getAgentTypes(){
-		for(AID a : runningAgents.key()) {
-			
+		try {
+			return parser.parse();
+		}catch(NamingException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 	

@@ -16,6 +16,10 @@ public class AID {
 	public Host getHost() {
 		return host;
 	}
+	@Override
+	public String toString() {
+		return name + agentType.getName() +  host.getAddress() +host.getAlias();
+	}
 	public void setHost(Host host) {
 		this.host = host;
 	}

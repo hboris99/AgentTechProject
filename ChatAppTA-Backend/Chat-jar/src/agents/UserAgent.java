@@ -1,7 +1,9 @@
 package agents;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -16,8 +18,10 @@ import chatmanager.ChatManagerRemote;
 import messagemanager.ACL;
 import messagemanager.AgentMessage;
 import messagemanager.MessageManagerRemote;
+import models.AgentType;
 import models.User;
 import models.UserMessage;
+import sun.management.resources.agent;
 import util.JNDILookup;
 import ws.WSChat;
 
@@ -39,6 +43,8 @@ public class UserAgent implements Agent {
 	private AgentManagerRemote agentManager;
 	@EJB
 	private WSChat ws;
+	@EJB
+	private MessageManagerRemote messageManager;
 
 	@PostConstruct
 	public void postConstruct() {
@@ -142,7 +148,23 @@ public class UserAgent implements Agent {
 						break;
 					case GET_AGENT_TYPES:
 						List<AgentType> agentTypes = agentManager.getAgentTypes();
-						ws.sendMessage(aid.getName(),"AGENT_TYPES%" +  message);
+						for(AgentType type : agentTypes) {
+							ws.sendMessage(aid.getName(),"AGENT_TYPE%" +  type.getName() + ',' + type.getHost());
+						}
+						break;
+					case GET_PERFORMATIVES:
+						List<String> performatives = messageManager.getPerformatives();
+						for(String p : performatives) {
+							ws.sendMessage(aid.getName(), "PERFORMATIVES%" + p);
+						}
+						break;
+					case GET_RUNNING_AGENTS:
+						Map<AID, Agent> runningAgents = cachedAgents.getRunningAgents();
+						for(Map.Entry<AID, Agent> running : runningAgents.entrySet()) {
+							ws.sendMessage(aid.getName(), "RUNNING_AGENTS%" + running.getKey().toString());
+						}
+						
+						break;
 					default:
 						System.out.println("Error selected case does not exist.");
 						break;
