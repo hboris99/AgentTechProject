@@ -1,5 +1,6 @@
 package chatmanager;
 
+import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,8 +10,16 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Stateful;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 
 import ConnectionManager.ConnectionManager;
+import models.Host;
 import models.User;
 import models.UserMessage;
 import ws.WSChat;
@@ -237,6 +246,18 @@ public class ChatManagerBean implements ChatManagerRemote {
 
 		connectionManager.notifyAllNewLogin(username);
 		
+	}
+	@Override
+	public Host getHost() {
+		String address = "";
+		try {
+			MBeanServer mbean = ManagementFactory.getPlatformMBeanServer();
+			ObjectName a = new ObjectName("jboss.as:socket-binding-group=standard-sockets,socket-binding=http");
+			address = (String) mbean.getAttribute(a, "boundAddress");
+		}catch (MalformedObjectNameException | InstanceNotFoundException | AttributeNotFoundException | ReflectionException | MBeanException e) {
+			e.printStackTrace();
+		}	
+		return new Host(address, System.getProperty("jboss.node.name") + ":8080" );
 	}
 
 	@Override

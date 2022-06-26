@@ -8,7 +8,7 @@ import javax.jms.Session;
 
 @Remote
 public interface MessageManagerRemote {
-	public void post(AgentMessage msg);
+	public void post(ACL msg);
 	public Session getSession();
 	public MessageConsumer getConsumer();
 	public List<String> getPerformatives();

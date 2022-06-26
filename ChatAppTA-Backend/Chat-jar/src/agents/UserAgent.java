@@ -1,5 +1,6 @@
 package agents;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,7 @@ import ws.WSChat;
 
 @Stateful
 @Remote(Agent.class)
-public class UserAgent implements Agent {
+public class UserAgent implements Agent, Serializable {
 
 	/**
 	 * 
@@ -62,114 +63,111 @@ public class UserAgent implements Agent {
 		String username = "";
 		String sender = "";
 		String content = "";
-		String reciever = "";
+		String reciever = (String) message.receivers.get(0).getName();
 		ACL acl = new ACL();
-			switch(message.getPerformative()) {
-					
-					case REGISTER:
-						
-						username = message.getSender().getName();
-						ws.notifyNewRegistration(username);
-						break;
-					case LOGIN:
-						username = message.getSender().getName();
-						
-						break;
-					case GET_LOGGEDIN:
-						List<String> activeUsernames = chatManager.getActiveUsernames();
-						List<User> activeRemoteUsers = chatManager.loggedInRemote();
-						for(String user: activeUsernames) {
-							for(AID aid : message.getReceivers()) {
-								ws.sendMessage(aid.getName(), "LOGIN%" + user);
-							}
-						}for(User u : activeRemoteUsers) {
-							for(AID aid : message.getReceivers()) {
-								ws.sendMessage(aid.getName(), "LOGIN%" + u);
-							}}
-						
-						break;
-					case NEW_MESSAGE:
-						
-						 sender = acl.getSender().getName();
-						content = acl.getContent();
-						reciever = acl.getReceivers()[0].getName();
+		if(aid.getName().equals(reciever)) {
+			String option = "";
+			option = (String) message.userArgs.get("command");
+			switch(option) {
 
-						UserMessage msg = new UserMessage(reciever, sender, new Date(), "New message", content);
-						
-						chatManager.saveMessage(msg);
-						
-						ws.sendMessage(reciever, msg);
-						break;
-					case GROUP_MESSAGE:
-						sender = acl.getSender().getName();
-						content = acl.getContent();
-						AID recievers[] = acl.getReceivers();
+			case "REGISTER":
+				
+				username = message.getSender().getName();
+				ws.notifyNewRegistration(username);
+				break;
+			case "LOGIN":
+				username = message.getSender().getName();
+				
+				break;
+			case "GET_LOGGEDIN":
+				List<String> activeUsernames = chatManager.getActiveUsernames();
+				List<User> activeRemoteUsers = chatManager.loggedInRemote();
+				for(String user: activeUsernames) {
+						ws.sendMessage(aid.getName(), "LOGIN%" + user);
 
-						UserMessage msg1 = new UserMessage(reciever, sender, new Date(), "New message", content);
-						
-						for(String recipient : chatManager.getActiveUsernames()) {
-							for(AID a : recievers) {
-								if(a.getName().equals(recipient)) {
-									msg1.setRecipient(recipient);
-									chatManager.saveMessage(msg1);
-								}
-							}
-							
-						}
-						for(User u : chatManager.loggedInRemote()) {
-							for(AID a : recievers) {
-								if(a.getName().equals(u.getUsername())) {
-									msg1.setRecipient(u.getUsername());
-									chatManager.saveMessage(msg1);
-								}
-							}
-							
-						}
-						ws.sendMessageToAllActiveUsers(msg1);
-						break;
-						
-					case GET_MESSAGES:
-						for(UserMessage msgf : chatManager.getUserMessages(aid.getName())) {
-							ws.sendMessage(aid.getName(), msgf);
-						}
-						break;
-						
-					case GET_REGISTERED:
-						List<String> registeredUsers = chatManager.getRegisteredUsernames();
-						for(String registered : registeredUsers) {
-							
-							System.out.println("These are the registered users: " + registered);
-							ws.sendMessage(aid.getName(),"REGISTRATION%" + registered);	
-						}
-						break;
-					case LOGOUT:
-						username = message.getSender().getName();
-						ws.closeSessionWhenLoggedOut(username);
-						break;
-					case GET_AGENT_TYPES:
-						List<AgentType> agentTypes = agentManager.getAgentTypes();
-						for(AgentType type : agentTypes) {
-							ws.sendMessage(aid.getName(),"AGENT_TYPE%" +  type.getName() + ',' + type.getHost());
-						}
-						break;
-					case GET_PERFORMATIVES:
-						List<String> performatives = messageManager.getPerformatives();
-						for(String p : performatives) {
-							ws.sendMessage(aid.getName(), "PERFORMATIVES%" + p);
-						}
-						break;
-					case GET_RUNNING_AGENTS:
-						Map<AID, Agent> runningAgents = cachedAgents.getRunningAgents();
-						for(Map.Entry<AID, Agent> running : runningAgents.entrySet()) {
-							ws.sendMessage(aid.getName(), "RUNNING_AGENTS%" + running.getKey().toString());
-						}
-						
-						break;
-					default:
-						System.out.println("Error selected case does not exist.");
-						break;
+				}for(User u : activeRemoteUsers) {
+						ws.sendMessage(aid.getName(), "LOGIN%" + u);
 					}
+				
+				break;
+			case "NEW_MESSAGE":
+				
+				 sender = acl.getSender().getName();
+				content = acl.getContent();
+				reciever = acl.receivers.get(0).getName();
+
+				UserMessage msg = new UserMessage(reciever, sender, new Date(), "New message", content);
+				
+				chatManager.saveMessage(msg);
+				
+				ws.sendMessage(reciever, msg);
+				break;
+			case "GROUP_MESSAGE":
+				sender = acl.getSender().getName();
+				content = acl.getContent();
+
+				UserMessage msg1 = new UserMessage(reciever, sender, new Date(), "New message", content);
+				
+				for(String recipient : chatManager.getActiveUsernames()) {
+							msg1.setRecipient(recipient);
+							chatManager.saveMessage(msg1);
 					
+				}
+				for(User u : chatManager.loggedInRemote()) {
+							msg1.setRecipient(u.getUsername());
+							chatManager.saveMessage(msg1);
+					
+				}
+				ws.sendMessageToAllActiveUsers(msg1);
+				break;
+				
+			case "GET_MESSAGES":
+				for(UserMessage msgf : chatManager.getUserMessages(aid.getName())) {
+					ws.sendMessage(aid.getName(), msgf);
+				}
+				break;
+				
+			case "GET_REGISTERED":
+				List<String> registeredUsers = chatManager.getRegisteredUsernames();
+				for(String registered : registeredUsers) {
+					
+					System.out.println("These are the registered users: " + registered);
+					ws.sendMessage(aid.getName(),"REGISTRATION%" + registered);	
+				}
+				break;
+			case "LOGOUT":
+				username = message.getSender().getName();
+				ws.closeSessionWhenLoggedOut(username);
+				break;
+			case "GET_AGENT_TYPES":
+				List<AgentType> agentTypes = agentManager.getAgentTypes();
+				for(AgentType type : agentTypes) {
+					System.out.println(type.getName());
+					ws.sendMessage(aid.getName(),"AGENT_TYPE%" +  type.getName() + ',' + type.getHost());
+				}
+				break;
+			case "GET_PERFORMATIVES":
+				List<String> performatives = messageManager.getPerformatives();
+				for(String p : performatives) {
+					System.out.println("Ova performativa postoji " + p);
+					ws.sendMessage(aid.getName(), "PERFORMATIVES%" + p);
+				}
+				break;
+			case "GET_RUNNING_AGENTS":
+				Map<AID, Agent> runningAgents = cachedAgents.getRunningAgents();
+				for(Map.Entry<AID, Agent> running : runningAgents.entrySet()) {
+					System.out.println("ovo su running agens" + running.getKey().getName());
+					ws.sendMessage(aid.getName(), "RUNNING_AGENTS%" + running.getKey().toString());
+				}
+				
+				break;
+			default:
+				System.out.println("Error selected case does not exist.");
+				break;
+			
+			}
+		}
+			
 					
 				
 			

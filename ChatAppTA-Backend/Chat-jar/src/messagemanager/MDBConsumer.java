@@ -35,19 +35,26 @@ public class MDBConsumer implements MessageListener {
 	 */
 	public void onMessage(Message message) {
 		try {
-			 ACL acl = (ACL)((ObjectMessage) message).getObject();
-			 for(AID aid : acl.getReceivers()) {
-				 Agent agent = cachedAgents.getByAid(aid);
-				 if(agent == null) {
-					 System.out.println("Ti ne licis ni na jednu");
-				 }else {
-					 agent.handleMessage(acl);
-				 }
+				process(message);
 			 }
-		} catch (JMSException e) {
+		catch(JMSException e) {
 			e.printStackTrace();
 		}
+	} 
 		
-	}
+	
 
+	public void process(Message message) throws JMSException{
+		ACL acl = (ACL) ((ObjectMessage) message).getObject();
+		 for(AID aid : acl.getReceivers()) {
+			 System.out.println(aid.getName());
+			 Agent agent = cachedAgents.getByAid(aid);
+			 if(agent == null) {
+				 System.out.println("Ti ne licis ni na jednu");
+			 }else {
+				 agent.handleMessage(acl);
+			 }
+
+		 }
+	}
 }

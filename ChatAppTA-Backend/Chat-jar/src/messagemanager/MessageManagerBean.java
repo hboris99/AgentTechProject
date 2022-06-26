@@ -49,7 +49,7 @@ public class MessageManagerBean implements MessageManagerRemote {
 		}
 	}
 
-	public void post(AgentMessage msg) {
+	public void post(ACL msg) {
 		try {
 			defaultProducer.send(createTextMessage(msg));
 		} catch (JMSException e) {
@@ -57,16 +57,12 @@ public class MessageManagerBean implements MessageManagerRemote {
 		}
 	}
 	
-	private Message createTextMessage(AgentMessage amsg) {
+	private Message createTextMessage(ACL amsg) {
 		Message msg = null ;
 		try {
-			msg = session.createTextMessage();
-			for(String property : amsg.userArgs.keySet()) {
-				msg.setObjectProperty(property, amsg.userArgs.get(property));
-			}
+			msg = session.createObjectMessage(amsg);
 			return msg;
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return msg;

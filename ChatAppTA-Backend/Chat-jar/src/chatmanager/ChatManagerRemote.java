@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Remote;
 
+import models.Host;
 import models.User;
 import models.UserMessage;
 
@@ -42,6 +43,7 @@ public interface ChatManagerRemote {
 	public void sendLogOutToNetwork(String username);
 	
 	public void sendMessageToNetwork(UserMessage msg);
-		
+	
+	public Host getHost();
 	
 }

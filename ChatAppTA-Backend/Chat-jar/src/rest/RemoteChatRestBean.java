@@ -11,9 +11,12 @@ import javax.ws.rs.core.MediaType;
 
 import agentmanager.AgentManagerBean;
 import agentmanager.AgentManagerRemote;
+import agents.AID;
 import chatmanager.ChatManagerRemote;
+import messagemanager.ACL;
 import messagemanager.AgentMessage;
 import messagemanager.MessageManagerRemote;
+import models.AgentType;
 import models.UserMessage;
 import util.JNDILookup;
 @Stateless
@@ -32,20 +35,24 @@ public class RemoteChatRestBean implements RemoteChatRest {
 
 	@Override
 	public void getLoggedUsers(String username) {
+		AID aid = new AID(username,chatManager.getHost(), new AgentType("UserAgent", chatManager.getHost().alias));
+		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
 
-		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, username);
-		AgentMessage message = new AgentMessage();
+		ACL message = new ACL();
+		message.receivers.add(aid);
 		message.userArgs.put("receiver", username);
-		message.userArgs.put("command", "GET_LOGGEDIN" );
-		
+		message.userArgs.put("command", "GET_LOGGEDIN" );		
 		messageManager.post(message);
 	
 	}
 
 	@Override
 	public void getRegisteredUsers(String username) {
-		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, username);
-		AgentMessage message = new AgentMessage();
+		AID aid = new AID(username,chatManager.getHost(), new AgentType("UserAgent", chatManager.getHost().alias));
+		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
+
+		ACL message = new ACL();
+		message.receivers.add(aid);
 		message.userArgs.put("receiver", username);
 		message.userArgs.put("command", "GET_REGISTERED" );
 		
@@ -55,11 +62,11 @@ public class RemoteChatRestBean implements RemoteChatRest {
 
 	@Override
 	public void getMessages(String username) {
-		System.out.println("Looking for: " + username + " messages.");
-		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, username);
-		System.out.println("Found " + username + " agent with the id: " + 	
-		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, username).getAgentId());
-		AgentMessage message = new AgentMessage();
+		AID aid = new AID(username,chatManager.getHost(), new AgentType("UserAgent", chatManager.getHost().alias));
+		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
+
+		ACL message = new ACL();
+		message.receivers.add(aid);
 		message.userArgs.put("receiver", username);
 		message.userArgs.put("command", "GET_MESSAGES");
 		
@@ -70,18 +77,16 @@ public class RemoteChatRestBean implements RemoteChatRest {
 	@Override
 	public void sendMessage(UserMessage userMessage) {
 
-		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, userMessage.sender);
-		
-		AgentMessage message = new AgentMessage();
-		System.out.println(userMessage.recipient);
-		
+		AID aid = new AID(userMessage.sender,chatManager.getHost(), new AgentType(userMessage.sender, chatManager.getHost().alias));
+		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
+		AID recipient = new AID(userMessage.recipient,chatManager.getHost(), new AgentType(userMessage.recipient, chatManager.getHost().alias));
 
-		message.userArgs.put("receiver", userMessage.sender);
+		ACL message = new ACL();
+		message.setSender(aid);
+		message.receivers.add(recipient);
+		message.setContent(userMessage.content);
 		message.userArgs.put("command", "NEW_MESSAGE");
-		message.userArgs.put("target", userMessage.recipient);
-		message.userArgs.put("sender", userMessage.sender);
-		message.userArgs.put("subject", userMessage.subject);
-		message.userArgs.put("content", userMessage.content);
+		
 
 		messageManager.post(message);
 
@@ -90,11 +95,12 @@ public class RemoteChatRestBean implements RemoteChatRest {
 
 	@Override
 	public void logOut(String username) {
-		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, "MASTER");
-		AgentMessage message = new AgentMessage();
-		message.userArgs.put("receiver", "MASTER");
+		AID aid = new AID("MASTER",chatManager.getHost(), new AgentType("MASTER", chatManager.getHost().alias));
+		AID sender = new AID(username, chatManager.getHost(), new AgentType("UserAgent", chatManager.getHost().getAlias()));
+		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
+		ACL message = new ACL();
+		message.setSender(sender);
 		message.userArgs.put("command", "LOGOUT" );
-		message.userArgs.put("username", username);
 		boolean res = chatManager.logOut(username);
 		if(res) {
 			System.out.println("Odlogovan: " + username);
@@ -106,13 +112,13 @@ public class RemoteChatRestBean implements RemoteChatRest {
 
 	@Override
 	public void sendMessageToAll(UserMessage userMessage) {
-		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, userMessage.sender);
-		AgentMessage message = new AgentMessage();	
+		AID aid = new AID(userMessage.sender,chatManager.getHost(), new AgentType(userMessage.sender, chatManager.getHost().alias));
+		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
+
+		ACL message = new ACL();
+		message.setSender(aid);
 		message.userArgs.put("command", "GROUP_MESSAGE");
-		message.userArgs.put("receiver", userMessage.sender);
-		message.userArgs.put("sender", userMessage.sender);
-		message.userArgs.put("subject", userMessage.subject);
-		message.userArgs.put("content", userMessage.content);
+		
 		
 		messageManager.post(message);
 	}

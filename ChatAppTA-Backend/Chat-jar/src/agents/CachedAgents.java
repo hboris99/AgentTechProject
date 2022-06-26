@@ -3,6 +3,7 @@ package agents;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -81,7 +82,17 @@ public class CachedAgents implements CachedAgentsRemote{
 	@Override
 	public List<AgentType> getTypes() {
 		// TODO Auto-generated method stub
-		return null;
+		return types;
+	}
+
+	@Override
+	public void removeByName(String name) {
+		for(Map.Entry<AID, Agent> entry : runningAgents.entrySet()) {
+			if(entry.getKey().getName().equals(name)) {
+				runningAgents.remove(entry.getKey());
+			}
+		}
+		
 	}
 
 	

@@ -15,4 +15,5 @@ public interface AgentManagerRemote {
 	public Agent getByIdOrStartNew(String name, AID id);
 	public void stop(AID name);
 	public List<AgentType> getAgentTypes();
+	public void stopAgentByName(String aid);
 }

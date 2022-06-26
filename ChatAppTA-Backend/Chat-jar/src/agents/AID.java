@@ -1,9 +1,15 @@
 package agents;
 
+import java.io.Serializable;
+
 import models.AgentType;
 import models.Host;
 
-public class AID {
+public class AID implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private Host host;
 	private AgentType agentType;

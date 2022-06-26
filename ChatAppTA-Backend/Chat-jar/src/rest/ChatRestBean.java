@@ -12,9 +12,13 @@ import javax.ws.rs.core.MediaType;
 
 import agentmanager.AgentManagerBean;
 import agentmanager.AgentManagerRemote;
+import agents.AID;
+import agents.Performative;
 import chatmanager.ChatManagerRemote;
+import messagemanager.ACL;
 import messagemanager.AgentMessage;
 import messagemanager.MessageManagerRemote;
+import models.AgentType;
 import models.User;
 import util.JNDILookup;
 
@@ -34,12 +38,16 @@ public class ChatRestBean implements ChatRest {
 	
 	@Override
 	public Response register(User user) {
-		
-		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, "MASTER");
-		AgentMessage message = new AgentMessage();
-		message.userArgs.put("receiver", "MASTER");
+		AID aid = new AID("MASTER",chatManager.getHost(), new AgentType("MASTER", chatManager.getHost().alias));
+		AID sender = new AID(user.getUsername(), chatManager.getHost(), new AgentType(user.getUsername(), chatManager.getHost().getAlias()));
+		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
+		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, sender);
+		ACL message = new ACL();
+		message.receivers.add(aid);
+		message.setPerformative(Performative.REGISTER);
+		message.setSender(sender);
+
 		message.userArgs.put("command", "REGISTER");
-		message.userArgs.put("username", user.getUsername());
 
 		boolean res = chatManager.register(new User(user.getUsername(), user.getPassword()));
 		
@@ -53,13 +61,16 @@ public class ChatRestBean implements ChatRest {
 
 	@Override
 	public Response login(User user) {
-		
-		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, "MASTER");
+		AID aid = new AID("MASTER",chatManager.getHost(), new AgentType("MASTER", chatManager.getHost().alias));
+		AID sender = new AID(user.getUsername(), chatManager.getHost(), new AgentType(user.getUsername(), chatManager.getHost().getAlias()));
+		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
+		ACL message = new ACL();
 
-		AgentMessage message = new AgentMessage();
-		message.userArgs.put("receiver", "MASTER");
+		message.receivers.add(aid);
+		message.setPerformative(Performative.LOGIN);
+		message.setSender(sender);
+
 		message.userArgs.put("command", "LOGIN");
-		message.userArgs.put("username", user.getUsername());
 		
 		String res = chatManager.login(user.getUsername(), user.getPassword());
 		

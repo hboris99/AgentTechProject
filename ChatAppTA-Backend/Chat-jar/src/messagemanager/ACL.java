@@ -1,19 +1,22 @@
 package messagemanager;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import agents.AID;
 import agents.Performative;
 
-public class ACL {
+public class ACL implements Serializable {
 	private Performative performative;
 	private AID sender;
-	private AID[] receivers;
+	public List<AID> receivers;
 	private AID replyTo;
 	private String content;
 	private Object contentObject;
-	public Map<String, Object> userArgs;
+	public HashMap<String, Object> userArgs;
 	private String language;
 	private String encoding;
 	private String ontology;
@@ -33,10 +36,10 @@ public class ACL {
 	public void setSender(AID sender) {
 		this.sender = sender;
 	}
-	public AID[] getReceivers() {
+	public List<AID> getReceivers() {
 		return receivers;
 	}
-	public void setReceivers(AID[] receivers) {
+	public void setReceivers(List<AID> receivers) {
 		this.receivers = receivers;
 	}
 	public AID getReplyTo() {
@@ -60,7 +63,7 @@ public class ACL {
 	public Object getUserArgs(String key) {
 		return userArgs.get(key);
 	}
-	public void setUserArgs(Map<String, Object> userArgs) {
+	public void setUserArgs(HashMap<String, Object> userArgs) {
 		this.userArgs = userArgs;
 	}
 	public String getLanguage() {
@@ -111,8 +114,8 @@ public class ACL {
 	public void setReplyBy(Long replyBy) {
 		this.replyBy = replyBy;
 	}
-	public ACL(Performative performative, AID sender, AID[] receivers, AID replyTo, String content,
-			Object contentObject, Map<String, Object> userArgs, String language, String encoding, String ontology,
+	public ACL(Performative performative, AID sender,List<AID> receivers, AID replyTo, String content,
+			Object contentObject, HashMap<String, Object> userArgs, String language, String encoding, String ontology,
 			String protocol, String conversationId, String replyWith, String inReplyTo, Long replyBy) {
 		super();
 		this.performative = performative;
@@ -133,7 +136,8 @@ public class ACL {
 	}
 	public ACL() {
 		super();
-		// TODO Auto-generated constructor stub
+		this.receivers = new ArrayList<>();
+		this.userArgs = new  HashMap<>();
 	}
 	private Long replyBy;
 }
