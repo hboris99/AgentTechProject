@@ -66,8 +66,6 @@ public class UserAgent implements Agent, Serializable {
 		String reciever = (String) message.receivers.get(0).getName();
 		ACL acl = new ACL();
 		if(aid.getName().equals(reciever)) {
-			String option = "";
-			option = (String) message.userArgs.get("command");
 			switch(message.getPerformative()) {
 
 			case REGISTER:

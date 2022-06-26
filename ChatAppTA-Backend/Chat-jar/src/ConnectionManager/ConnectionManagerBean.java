@@ -25,7 +25,9 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
+import agentmanager.AgentManagerRemote;
 import agents.AID;
+import agents.Performative;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import chatmanager.ChatManagerRemote;
+import messagemanager.ACL;
 import models.AgentType;
 import models.Host;
 import models.User;
@@ -57,6 +60,8 @@ public class ConnectionManagerBean implements ConnectionManager{
 	
 	@EJB
 	private WSChat ws;
+	@EJB
+	private AgentManagerRemote agm;
 	
 	
 	@PostConstruct
@@ -168,6 +173,9 @@ public class ConnectionManagerBean implements ConnectionManager{
 					
 					manager.addRemoteLogin(user);
 				}
+				manager.runningAgentsRemote(agm.getRemoteAgents());
+				List<AgentType> types = manager.getAgentTypes();
+				agm.setRemoteAgentTypes(types);
 				resteasyClient.close();
 			}
 			
@@ -318,35 +326,37 @@ public class ConnectionManagerBean implements ConnectionManager{
 
 
 	@Override
-	public void runningAgentsForNodes(List<AID> agents) {
+	public void runningAgentsRemote(List<AID> agents) {
+		
+		agm.setRemoteRunningAgents(agents);
+	
+		
+	}
+
+
+	@Override
+	public void agentTypesRemote(List<AgentType> agentTypes) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
-	public void agentTypesForNodes(List<AgentType> agentTypes) {
+	public void removeAgentRemote(String nodeAlias) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
-	public void removeAgentType(String nodeAlias) {
+	public void sendNewAgentToNetwork() {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
-	public void agentRunningNofityNodes() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void agentTypesNofityNodes() {
+	public void sendAgentTypesToNetwork() {
 		// TODO Auto-generated method stub
 		
 	}

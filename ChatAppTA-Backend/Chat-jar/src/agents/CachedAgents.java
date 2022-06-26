@@ -95,6 +95,12 @@ public class CachedAgents implements CachedAgentsRemote{
 		
 	}
 
+	@Override
+	public void setRemoteAgentTypes(List<AgentType> types) {
+		this.types.addAll(types);
+		
+	}
+
 	
 
 }

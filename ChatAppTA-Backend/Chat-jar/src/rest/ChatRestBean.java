@@ -47,7 +47,6 @@ public class ChatRestBean implements ChatRest {
 		message.setPerformative(Performative.REGISTER);
 		message.setSender(sender);
 
-		message.userArgs.put("command", "REGISTER");
 
 		boolean res = chatManager.register(new User(user.getUsername(), user.getPassword()));
 		
@@ -70,7 +69,6 @@ public class ChatRestBean implements ChatRest {
 		message.setPerformative(Performative.LOGIN);
 		message.setSender(sender);
 
-		message.userArgs.put("command", "LOGIN");
 		
 		String res = chatManager.login(user.getUsername(), user.getPassword());
 		

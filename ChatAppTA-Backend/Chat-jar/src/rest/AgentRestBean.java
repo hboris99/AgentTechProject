@@ -42,7 +42,6 @@ public class AgentRestBean implements AgentRest {
 		message.receivers.add(aid);
 		message.setPerformative(Performative.GET_AGENT_TYPES);
 
-		message.userArgs.put("command", "GET_AGENT_TYPES");
 		messageManager.post(message);
 
 	}
@@ -108,7 +107,6 @@ public class AgentRestBean implements AgentRest {
 		ACL message = new ACL();	
 		message.receivers.add(aid);
 		message.setPerformative(Performative.GET_PERFORMATIVES);
-		message.userArgs.put("command", "GET_PERFORMATIVES");
 		messageManager.post(message);				
 	}
 

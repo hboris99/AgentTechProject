@@ -13,4 +13,5 @@ public interface CachedAgentsRemote {
 	public Agent getByAid(AID aid);
 	public List<AgentType> getTypes();
 	public void removeByName(String name);
+	public void setRemoteAgentTypes(List<AgentType> types);
 }

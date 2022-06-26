@@ -90,31 +90,31 @@ public interface ConnectionManager {
 	@Path("/agents/runningAgents")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void runningAgentsForNodes(List<AID> agents);
+	public void runningAgentsRemote(List<AID> agents);
 	
 	@POST
 	@Path("/agents/agentTypes")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void agentTypesForNodes(List<AgentType> agentTypes);
+	public void agentTypesRemote(List<AgentType> agentTypes);
 
 	@POST
 	@Path("/agents/removeAgentType")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	void removeAgentType(String nodeAlias);
+	void removeAgentRemote(String nodeAlias);
 	
 	@POST
 	@Path("/node/startAgent")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void agentRunningNofityNodes();
+	public void sendNewAgentToNetwork();
 	
 	@POST
 	@Path("/node/agentTypes")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void agentTypesNofityNodes();
+	public void sendAgentTypesToNetwork();
 	
 	@GET
 	@Path("/agents/agentTypes")

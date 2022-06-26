@@ -44,7 +44,6 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		message.userArgs.put("receiver", username);
 		message.setPerformative(Performative.GET_LOGGEDIN);
 
-		message.userArgs.put("command", "GET_LOGGEDIN" );		
 		messageManager.post(message);
 	
 	}
@@ -59,7 +58,6 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		message.userArgs.put("receiver", username);
 		message.setPerformative(Performative.GET_REGISTERED);
 
-		message.userArgs.put("command", "GET_REGISTERED" );
 		
 		messageManager.post(message);
 			
@@ -75,7 +73,6 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		message.userArgs.put("receiver", username);
 		message.setPerformative(Performative.GET_MESSAGES);
 
-		message.userArgs.put("command", "GET_MESSAGES");
 		
 		messageManager.post(message);
 		
@@ -94,7 +91,6 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		message.setSender(aid);
 		message.receivers.add(recipient);
 		message.setContent(userMessage.content);
-		message.userArgs.put("command", "NEW_MESSAGE");
 		
 
 		messageManager.post(message);
@@ -111,7 +107,6 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		message.setSender(sender);
 		message.setPerformative(Performative.LOGOUT);
 
-		message.userArgs.put("command", "LOGOUT" );
 		boolean res = chatManager.logOut(username);
 		if(res) {
 			System.out.println("Odlogovan: " + username);
@@ -130,7 +125,6 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		message.setPerformative(Performative.GROUP_MESSAGE);
 
 		message.setSender(aid);
-		message.userArgs.put("command", "GROUP_MESSAGE");
 		
 		
 		messageManager.post(message);

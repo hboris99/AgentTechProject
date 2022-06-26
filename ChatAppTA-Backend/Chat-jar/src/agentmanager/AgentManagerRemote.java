@@ -16,4 +16,7 @@ public interface AgentManagerRemote {
 	public void stop(AID name);
 	public List<AgentType> getAgentTypes();
 	public void stopAgentByName(String aid);
+	public void setRemoteRunningAgents(List<AID> agents);
+	public List<AID> getRemoteAgents();
+	public void setRemoteAgentTypes(List<AgentType> types);
 }

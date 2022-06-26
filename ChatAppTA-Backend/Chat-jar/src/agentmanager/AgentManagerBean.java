@@ -1,5 +1,6 @@
 package agentmanager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -22,6 +23,7 @@ public class AgentManagerBean implements AgentManagerRemote {
 	@EJB
 	private CachedAgentsRemote cachedAgents;
 	
+	private List<AID> remoteAgents = new ArrayList<>();
     public AgentManagerBean() {
         
     }
@@ -69,6 +71,25 @@ public class AgentManagerBean implements AgentManagerRemote {
 	public void stopAgentByName(String aid) {
 		cachedAgents.removeByName(aid);
 		
+	}
+
+	@Override
+	public void setRemoteRunningAgents(List<AID> agents) {
+		
+		this.remoteAgents = agents;
+		
+	}
+
+	@Override
+	public List<AID> getRemoteAgents() {
+		// TODO Auto-generated method stub
+		return remoteAgents;
+	}
+
+	@Override
+	public void setRemoteAgentTypes(List<AgentType> types) {
+
+		cachedAgents.setRemoteAgentTypes(types);
 	}
 
 
