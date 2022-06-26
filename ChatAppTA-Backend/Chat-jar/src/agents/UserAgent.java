@@ -68,18 +68,18 @@ public class UserAgent implements Agent, Serializable {
 		if(aid.getName().equals(reciever)) {
 			String option = "";
 			option = (String) message.userArgs.get("command");
-			switch(option) {
+			switch(message.getPerformative()) {
 
-			case "REGISTER":
+			case REGISTER:
 				
 				username = message.getSender().getName();
 				ws.notifyNewRegistration(username);
 				break;
-			case "LOGIN":
+			case LOGIN:
 				username = message.getSender().getName();
 				
 				break;
-			case "GET_LOGGEDIN":
+			case GET_LOGGEDIN:
 				List<String> activeUsernames = chatManager.getActiveUsernames();
 				List<User> activeRemoteUsers = chatManager.loggedInRemote();
 				for(String user: activeUsernames) {
@@ -90,7 +90,7 @@ public class UserAgent implements Agent, Serializable {
 					}
 				
 				break;
-			case "NEW_MESSAGE":
+			case NEW_MESSAGE:
 				
 				 sender = acl.getSender().getName();
 				content = acl.getContent();
@@ -102,7 +102,7 @@ public class UserAgent implements Agent, Serializable {
 				
 				ws.sendMessage(reciever, msg);
 				break;
-			case "GROUP_MESSAGE":
+			case GROUP_MESSAGE:
 				sender = acl.getSender().getName();
 				content = acl.getContent();
 
@@ -121,13 +121,13 @@ public class UserAgent implements Agent, Serializable {
 				ws.sendMessageToAllActiveUsers(msg1);
 				break;
 				
-			case "GET_MESSAGES":
+			case GET_MESSAGES:
 				for(UserMessage msgf : chatManager.getUserMessages(aid.getName())) {
 					ws.sendMessage(aid.getName(), msgf);
 				}
 				break;
 				
-			case "GET_REGISTERED":
+			case GET_REGISTERED:
 				List<String> registeredUsers = chatManager.getRegisteredUsernames();
 				for(String registered : registeredUsers) {
 					
@@ -135,25 +135,25 @@ public class UserAgent implements Agent, Serializable {
 					ws.sendMessage(aid.getName(),"REGISTRATION%" + registered);	
 				}
 				break;
-			case "LOGOUT":
+			case LOGOUT:
 				username = message.getSender().getName();
 				ws.closeSessionWhenLoggedOut(username);
 				break;
-			case "GET_AGENT_TYPES":
+			case GET_AGENT_TYPES:
 				List<AgentType> agentTypes = agentManager.getAgentTypes();
 				for(AgentType type : agentTypes) {
 					System.out.println(type.getName());
 					ws.sendMessage(aid.getName(),"AGENT_TYPE%" +  type.getName() + ',' + type.getHost());
 				}
 				break;
-			case "GET_PERFORMATIVES":
+			case GET_PERFORMATIVES:
 				List<String> performatives = messageManager.getPerformatives();
 				for(String p : performatives) {
 					System.out.println("Ova performativa postoji " + p);
 					ws.sendMessage(aid.getName(), "PERFORMATIVES%" + p);
 				}
 				break;
-			case "GET_RUNNING_AGENTS":
+			case GET_RUNNING_AGENTS:
 				Map<AID, Agent> runningAgents = cachedAgents.getRunningAgents();
 				for(Map.Entry<AID, Agent> running : runningAgents.entrySet()) {
 					System.out.println("ovo su running agens" + running.getKey().getName());

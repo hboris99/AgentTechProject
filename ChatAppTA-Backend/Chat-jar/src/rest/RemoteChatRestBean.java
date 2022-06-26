@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import agentmanager.AgentManagerBean;
 import agentmanager.AgentManagerRemote;
 import agents.AID;
+import agents.Performative;
 import chatmanager.ChatManagerRemote;
 import messagemanager.ACL;
 import messagemanager.AgentMessage;
@@ -41,6 +42,8 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		ACL message = new ACL();
 		message.receivers.add(aid);
 		message.userArgs.put("receiver", username);
+		message.setPerformative(Performative.GET_LOGGEDIN);
+
 		message.userArgs.put("command", "GET_LOGGEDIN" );		
 		messageManager.post(message);
 	
@@ -54,6 +57,8 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		ACL message = new ACL();
 		message.receivers.add(aid);
 		message.userArgs.put("receiver", username);
+		message.setPerformative(Performative.GET_REGISTERED);
+
 		message.userArgs.put("command", "GET_REGISTERED" );
 		
 		messageManager.post(message);
@@ -68,6 +73,8 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		ACL message = new ACL();
 		message.receivers.add(aid);
 		message.userArgs.put("receiver", username);
+		message.setPerformative(Performative.GET_MESSAGES);
+
 		message.userArgs.put("command", "GET_MESSAGES");
 		
 		messageManager.post(message);
@@ -82,6 +89,8 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		AID recipient = new AID(userMessage.recipient,chatManager.getHost(), new AgentType(userMessage.recipient, chatManager.getHost().alias));
 
 		ACL message = new ACL();
+		message.setPerformative(Performative.NEW_MESSAGE);
+
 		message.setSender(aid);
 		message.receivers.add(recipient);
 		message.setContent(userMessage.content);
@@ -100,6 +109,8 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
 		ACL message = new ACL();
 		message.setSender(sender);
+		message.setPerformative(Performative.LOGOUT);
+
 		message.userArgs.put("command", "LOGOUT" );
 		boolean res = chatManager.logOut(username);
 		if(res) {
@@ -116,6 +127,8 @@ public class RemoteChatRestBean implements RemoteChatRest {
 		agentManager.getByIdOrStartNew(JNDILookup.ChatAgentLookup, aid);
 
 		ACL message = new ACL();
+		message.setPerformative(Performative.GROUP_MESSAGE);
+
 		message.setSender(aid);
 		message.userArgs.put("command", "GROUP_MESSAGE");
 		

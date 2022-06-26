@@ -13,6 +13,7 @@ import agentmanager.AgentManagerBean;
 import agentmanager.AgentManagerRemote;
 import agents.AID;
 import agents.Agent;
+import agents.Performative;
 import chatmanager.ChatManagerRemote;
 import messagemanager.ACL;
 import messagemanager.MessageManagerRemote;
@@ -39,6 +40,8 @@ public class AgentRestBean implements AgentRest {
 
 		ACL message = new ACL();	
 		message.receivers.add(aid);
+		message.setPerformative(Performative.GET_AGENT_TYPES);
+
 		message.userArgs.put("command", "GET_AGENT_TYPES");
 		messageManager.post(message);
 
@@ -50,7 +53,7 @@ public class AgentRestBean implements AgentRest {
 
 		ACL message = new ACL();	
 		message.receivers.add(aid);
-		message.userArgs.put("command", "GET_RUNNING_AGENTS");
+		message.setPerformative(Performative.GET_RUNNING_AGENTS);
 		messageManager.post(message);		
 	}
 
@@ -65,7 +68,7 @@ public class AgentRestBean implements AgentRest {
 		agentManager.startAgent(aname, aid);
 		
 		ACL acl = new ACL();
-		acl.userArgs.put("command", "GET_RUNNING_AGENTS");
+		acl.setPerformative(Performative.GET_RUNNING_AGENTS);
 		for(User u : chatManager.getActiveUsers()) {
 			AID aid1 = new AID(u.getUsername(), host, new AgentType("UserAgent", host.alias));
 			acl.receivers.add(aid1);
@@ -80,7 +83,7 @@ public class AgentRestBean implements AgentRest {
 		Host host = chatManager.getHost();
 		agentManager.stopAgentByName(aid);
 		ACL acl = new ACL();
-		acl.userArgs.put("command", "GET_RUNNING_AGENTS");
+		acl.setPerformative(Performative.GET_RUNNING_AGENTS);
 		for(User u : chatManager.getActiveUsers()) {
 			AID aid1 = new AID(u.getUsername(), host, new AgentType("UserAgent", host.alias));
 			acl.receivers.add(aid1);
@@ -93,7 +96,7 @@ public class AgentRestBean implements AgentRest {
 
 	@Override
 	public void sendACL(ACL message) {
-
+		
 		messageManager.post(message);
 	}
 
@@ -104,6 +107,7 @@ public class AgentRestBean implements AgentRest {
 		System.out.println("Ovo mu saljem u restu" + ime);
 		ACL message = new ACL();	
 		message.receivers.add(aid);
+		message.setPerformative(Performative.GET_PERFORMATIVES);
 		message.userArgs.put("command", "GET_PERFORMATIVES");
 		messageManager.post(message);				
 	}

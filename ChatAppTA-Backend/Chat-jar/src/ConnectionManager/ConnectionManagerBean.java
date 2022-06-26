@@ -25,12 +25,15 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
+import agents.AID;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import chatmanager.ChatManagerRemote;
+import models.AgentType;
 import models.Host;
 import models.User;
 import models.UserMessage;
@@ -311,6 +314,55 @@ public class ConnectionManagerBean implements ConnectionManager{
 			resteasyClient.close();
 			}
 		}		
+	}
+
+
+	@Override
+	public void runningAgentsForNodes(List<AID> agents) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void agentTypesForNodes(List<AgentType> agentTypes) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void removeAgentType(String nodeAlias) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void agentRunningNofityNodes() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void agentTypesNofityNodes() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public List<AgentType> getAgentTypes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void removeAgent(String nodeAlias) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
